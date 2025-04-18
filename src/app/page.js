@@ -31,58 +31,59 @@ export default function Home() {
 
         {/* Products */}
 
-        <section
-          id="products"
-          className={styles.section}
-        >
+        <section id="products" className={styles.section}>
           <div className={styles.products}>
             <div className={styles.productCard}>
               <div className={styles.cardInfo}>
                 <h2>Вітрове скло</h2>
                 <p>Захист від вітру та покращена аеродинаміка.</p>
-                <a 
+                <a
                   href="https://vulpes.com.ua/vetrovoe-steklo/"
                   className={styles.linkButton}
-                >Докладніше</a>
+                >
+                  Докладніше
+                </a>
               </div>
               <div>
                 <Image
-                src={windshield}
-                alt="windshield on bike"
-                fill
-                style={{ objectFit: "cover"}}
-              />
+                  src={windshield}
+                  alt="windshield on bike"
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
               </div>
             </div>
             <div className={styles.productCard}>
               <div>
                 <Image
-                src={guard}
-                alt="Motoguard on bike"
-                fill
-                style={{ objectFit: "cover"}}
-              />
+                  src={guard}
+                  alt="Motoguard on bike"
+                  fill
+                  style={{ objectFit: "cover" }}
+                />
               </div>
               <div className={styles.cardInfo}>
                 <h2>Захісні дуги</h2>
                 <p>Надійний захист двигуна та рами від пошкоджень.</p>
-                <a 
+                <a
                   href="https://vulpes.com.ua/zashchitnye-dugi/1122/"
                   className={styles.linkButton}
-                >Докладніше</a>
+                >
+                  Докладніше
+                </a>
               </div>
             </div>
           </div>
         </section>
 
-        {/* <section id="contact" className={`${styles.section} ${styles.contact}`}>
-          <div className={styles.container}>
+        <section id="contact" className={`${styles.section} ${styles.contact}`}>
+          <div className={`${styles.container} ${styles.contactContainer}`}>
             <h2>Контакти</h2>
             <p>Зв&apos;яжіться з нами для замовлення:</p>
-            <p>Телефон: +38 (123) 456-78-90</p>
-            <p>Email: zephyr@example.com</p>
+            <a href="tel:+380507220902">Телефон: +380 (50) 722-09-02</a>
+            <a href="mailto:info@vulpes.com.ua">Email: info@vulpes.com.ua</a>
           </div>
-        </section> */}
+        </section>
       </main>
       <footer className={styles.footer}>
         <div className={styles.container}>
