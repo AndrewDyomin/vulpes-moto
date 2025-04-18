@@ -49,7 +49,8 @@ export default function RootLayout({ children }) {
               alt="Vulpes Moto"
               width={200}
               height={50}
-              priority // если хочешь, чтобы оно загружалось первым
+              priority
+              className="logoImage"
             />
             <nav className={"nav"}>
               <a href=".//#contact">Контакти</a>
