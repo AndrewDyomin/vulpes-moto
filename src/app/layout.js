@@ -30,6 +30,9 @@ export const metadata = {
     "запчастини для скутера",
     "тюнинг квадроцикла"
   ],
+  other: {
+    "google-site-verification": "LFzL05vfJF8gEKJvfuHLL3CkUbxPJj-Px10ALJbDtJE"
+  }
 };
 
 export default function RootLayout({ children }) {
