@@ -1,0 +1,52 @@
+import { Roboto } from "next/font/google";
+import "./globals.css";
+import headerImage from "../../public/pageHeader.png";
+import logo from "../../public/logo-vulpes.png";
+import Image from "next/image";
+
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+export const metadata = {
+  title: "Vulpes Moto",
+  description: "Описание сайта",
+};
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={`${roboto.variable}`}>
+        <header className={"header"}>
+          <Image
+            src={headerImage}
+            alt="Backgrond motor"
+            fill
+            style={{ objectFit: "contain" }}
+          />
+          <div className={"container"}>
+            <Image
+              src={logo}
+              alt="Vulpes Moto"
+              width={200}
+              height={50}
+              priority // если хочешь, чтобы оно загружалось первым
+            />
+            <nav className={"nav"}>
+              <a href=".//#contact">Контакти</a>
+              <a 
+                href="https://vulpes.com.ua/kataloh" 
+                className="link"
+                target="_blank" 
+                rel="noopener noreferrer"
+              >Каталог</a>
+            </nav>
+          </div>
+        </header>
+        {children}
+      </body>
+    </html>
+  );
+}

@@ -1,0 +1,149 @@
+/* Общие стили секций */
+
+.section {
+  padding: 0 10px;
+  margin-bottom: 60px;
+}
+
+.heroBckgrnd {
+  width: 100%;
+  height: 70vh;
+  position: relative;
+}
+
+.heroTitle {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+.heroText {
+  text-align: center;
+  margin-top: 15px;
+  font-weight: 300;
+  line-height: 1.4;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.products {
+  display: grid;
+  gap: 40px;
+}
+
+.productCard {
+  padding: 10px 0 10px 10px;
+  background: #fff;
+  border: 3px solid #929292;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 5px;
+  color: #000;
+  height: 60vw;
+  animation: fadeIn 1s ease-in-out forwards;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 1px 4px rgba(255, 255, 255, 0.15) inset;
+  transition: box-shadow 0.3s ease;
+}
+
+.productCard:nth-child(2n) {
+  grid-template-columns: 3fr 1fr;
+  padding: 10px 10px 10px 0;
+}
+
+.productCard:hover {
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 2px 6px rgba(255, 255, 255, 0.2) inset;
+}
+
+.productCard > div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.linkButton {
+  display: flex;
+  align-items: center;
+  background-image: linear-gradient(
+    145deg,
+    #f0f0f0 0%,
+    #dcdcdc 20%,
+    #ffffff 40%,
+    #c0c0c0 60%,
+    #f9f9f9 80%,
+    #b0b0b0 100%
+  );
+  padding: 5px 10px;
+  border-radius: 30px;
+  max-width: 300px;
+  max-height: 30px;
+  color: #000;
+  border: 1px solid #b0b0b0;
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25),
+    -2px -2px 5px rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease-in-out;
+}
+
+.linkButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3),
+    -2px -2px 5px rgba(255, 255, 255, 0.6);
+}
+
+.linkButton:active {
+  transform: translateY(1px);
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.cardInfo {
+  margin-top: auto;
+  display: grid;
+  gap: 5px;
+  align-items: end;
+}
+
+.cardInfo h2 {
+  font-size: 20px;
+}
+
+/* Секция "Контакты" */
+.contact {
+  background: #fff;
+  text-align: center;
+  border-radius: 12px;
+  padding: 3rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.contact p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+/* Футер */
+.footer {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
