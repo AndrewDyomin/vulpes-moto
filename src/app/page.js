@@ -76,6 +76,40 @@ export default function Home() {
           </div>
         </section>
 
+        {/* About */}
+
+        <section className={styles.section}>
+          <div className={styles.container}>
+            <h2>Vulpes Moto — тюнінг і аксесуари для мотоциклів в Україні</h2>
+            <p className={styles.aboutPart}>
+              Інтернет-магазин <strong>Vulpes Moto</strong> спеціалізується на продажу
+              якісного тюнінгу, захисту та <strong>аксесуарів для мотоциклів</strong>,
+              скутерів та квадроциклів. У нас ви знайдете продукцію провідних брендів, таких як
+              <strong> ConStands, Bagtecs, Craftride, Lumitecs, Moto Guard</strong> та інші.
+            </p>
+            <p className={styles.aboutPart}>
+              Наш каталог включає <strong>вітрові стекла</strong>, <strong>захисні дуги</strong>,
+              <strong> кофри</strong>, <strong>кріплення</strong>, <strong>підкати</strong> та
+              багато іншого. Ми доставляємо товари по всій Україні, забезпечуючи
+              високий рівень сервісу та підтримки для кожного клієнта.
+            </p>
+            <div className={styles.aboutPart}>
+              Обираючи <strong>мотоаксесуари</strong> від Vulpes Moto, ви отримуєте:
+              <ul>
+                <li>✔ Надійну продукцію, перевірену часом</li>
+                <li>✔ Швидке оформлення та доставку</li>
+                <li>✔ Професійну консультацію щодо сумісності</li>
+              </ul>
+            </div>
+            <p className={styles.aboutPart}>
+              Покращуй безпеку, функціональність і вигляд свого мотоцикла вже сьогодні —
+              <strong> замовляй онлайн на <a href="https://vulpes.com.ua">vulpes.com.ua</a>!</strong>
+            </p>
+          </div>
+        </section>
+
+        {/* Contacts */}
+
         <section id="contact" className={`${styles.section} ${styles.contact}`}>
           <div className={`${styles.container} ${styles.contactContainer}`}>
             <h2>Контакти</h2>
