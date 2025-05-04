@@ -1,8 +1,6 @@
-"use client"
+'use client';
 
 import { useEffect, useRef, useState } from 'react';
-
-// Импортируем нужные компоненты из библиотеки @zxing/library
 import { BrowserMultiFormatReader } from '@zxing/library';
 
 const BarcodeScanner = () => {
@@ -13,64 +11,50 @@ const BarcodeScanner = () => {
   const codeReaderRef = useRef(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && navigator.mediaDevices) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true })
-        .then((stream) => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = stream;
-          }
-        })
-        .catch((err) => {
-          const errorMessage = `Failed to access camera: ${err.message}`;
-          alert(errorMessage);
-          // Или отображать ошибку на экране
-          setResult(errorMessage);
-        });
-    }
-  }, []);
-  
+    const codeReader = new BrowserMultiFormatReader();
+    codeReaderRef.current = codeReader;
 
-  useEffect(() => {
-    // Инициализация объекта BrowserMultiFormatReader
-    codeReaderRef.current = new BrowserMultiFormatReader();
-    console.log('ZXing code reader initialized');
-
-    // Получение списка доступных видеоустройств
-    codeReaderRef.current.listVideoInputDevices()
-      .then((videoInputDevices) => {
-        if (videoInputDevices.length > 0) {
-          setSelectedDeviceId(videoInputDevices[0].deviceId);
-          setVideoDevices(videoInputDevices);
+    codeReader.listVideoInputDevices()
+      .then((devices) => {
+        setVideoDevices(devices);
+        if (devices.length > 0) {
+          setSelectedDeviceId(devices[0].deviceId);
         }
       })
       .catch((err) => {
-        console.error(err);
+        console.error('Error listing video devices', err);
+        setResult('Ошибка доступа к камере');
       });
 
     return () => {
-      if (codeReaderRef.current) {
-        codeReaderRef.current.reset();
-      }
+      codeReader.reset();
     };
   }, []);
 
   const handleStart = () => {
-    if (codeReaderRef.current && selectedDeviceId) {
-      codeReaderRef.current.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-        if (result) {
-          console.log(result);
-          setResult(result.text);
-        }
-        if (err) {
-          // Проверка типа ошибки
-          if (err.name !== 'NotFoundException') {
+    if (codeReaderRef.current && selectedDeviceId && videoRef.current) {
+      codeReaderRef.current.decodeFromVideoDevice(
+        selectedDeviceId,
+        videoRef.current,
+        (res, err) => {
+          if (res) {
+            setResult(res.getText());
+            console.log('Scanned result:', res.getText());
+          }
+          if (err && err.name !== 'NotFoundException') {
             console.error(err);
-            setResult(err.toString());
+            setResult(err.message || 'Ошибка сканирования');
           }
         }
-      });
-      console.log(`Started continuous decode from camera with id ${selectedDeviceId}`);
+      );
+
+      // Явный запуск видео (важно для Safari)
+      const stream = videoRef.current.srcObject;
+      if (videoRef.current && stream) {
+        videoRef.current.play().catch((err) => {
+          console.error('Video play error:', err);
+        });
+      }
     }
   };
 
@@ -78,62 +62,48 @@ const BarcodeScanner = () => {
     if (codeReaderRef.current) {
       codeReaderRef.current.reset();
       setResult('');
-      console.log('Reset.');
     }
   };
 
-  const handleDeviceChange = (e) => {
-    setSelectedDeviceId(e.target.value);
-  };
-
   return (
-    <>
-      <main className="wrapper" style={{ paddingTop: '2em' }}>
-        <section id="demo-content">
-          <h1 className="title">Scan BarCode</h1>
+    <div style={{ padding: '1rem' }}>
+      <h1>Сканер штрихкодов</h1>
 
-          <p>
-            <a className="button-small button-outline" href="../../index.html">HOME 🏡</a>
-          </p>
+      <video
+        ref={videoRef}
+        width="300"
+        height="200"
+        autoPlay
+        muted
+        playsInline
+        style={{ border: '1px solid gray', marginBottom: '1rem' }}
+      />
 
-          <div>
-            <video 
-              id="video" 
-              ref={videoRef} 
-              width="300" 
-              height="200" 
-              style={{ border: '1px solid gray' }}
-            ></video>
-          </div>
+      {videoDevices.length > 1 && (
+        <select
+          onChange={(e) => setSelectedDeviceId(e.target.value)}
+          style={{ marginBottom: '1rem' }}
+        >
+          {videoDevices.map((device) => (
+            <option key={device.deviceId} value={device.deviceId}>
+              {device.label || `Камера ${device.deviceId}`}
+            </option>
+          ))}
+        </select>
+      )}
 
-          <div>
-            <button className="button" onClick={handleStart}>Start</button>
-            <button className="button" onClick={handleReset}>Reset</button>
-          </div>
+      <div style={{ marginBottom: '1rem' }}>
+        <button onClick={handleStart}>Старт</button>
+        <button onClick={handleReset} style={{ marginLeft: '1rem' }}>
+          Сброс
+        </button>
+      </div>
 
-          {videoDevices.length > 1 && (
-            <div id="sourceSelectPanel">
-              <label htmlFor="sourceSelect">Change video source:</label>
-              <select 
-                id="sourceSelect" 
-                style={{ maxWidth: '400px' }}
-                onChange={handleDeviceChange}
-              >
-                {videoDevices.map((device) => (
-                  <option key={device.deviceId} value={device.deviceId}>
-                    {device.label || `Device ${device.deviceId}`}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <label>Result:</label>
-          <pre><code id="result">{result}</code></pre>
-
-        </section>
-      </main>
-    </>
+      <div>
+        <strong>Результат:</strong>
+        <pre>{result}</pre>
+      </div>
+    </div>
   );
 };
 
