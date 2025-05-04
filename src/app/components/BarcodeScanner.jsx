@@ -2,121 +2,120 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-const CameraScanner = () => {
-  const videoRef = useRef(null);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
-  const [devices, setDevices] = useState([]);
+// Импортируем нужные компоненты из библиотеки @zxing/library
+import { BrowserMultiFormatReader } from '@zxing/library';
+
+const BarcodeScanner = () => {
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
-  const [codeReader, setCodeReader] = useState(null);
-  const [scannerActive, setScannerActive] = useState(false);
+  const [result, setResult] = useState('');
+  const [videoDevices, setVideoDevices] = useState([]);
+  const videoRef = useRef(null);
+  const codeReaderRef = useRef(null);
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@zxing/library@latest/umd/index.min.js';
-    script.async = true;
-    script.onload = () => {
-      const reader = new ZXing.BrowserMultiFormatReader();
-      setCodeReader(reader);
+    // Инициализация объекта BrowserMultiFormatReader
+    codeReaderRef.current = new BrowserMultiFormatReader();
+    console.log('ZXing code reader initialized');
 
-      reader.listVideoInputDevices()
-        .then((videoInputDevices) => {
-          if (videoInputDevices.length > 0) {
-            setDevices(videoInputDevices);
-            setSelectedDeviceId(videoInputDevices[0].deviceId);
-          }
-        })
-        .catch((err) => {
-          console.error('Error listing video devices: ', err);
-          setError('Не удалось найти устройства камеры.');
-        });
-    };
-    document.body.appendChild(script);
+    // Получение списка доступных видеоустройств
+    codeReaderRef.current.listVideoInputDevices()
+      .then((videoInputDevices) => {
+        if (videoInputDevices.length > 0) {
+          setSelectedDeviceId(videoInputDevices[0].deviceId);
+          setVideoDevices(videoInputDevices);
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     return () => {
-      if (scannerActive && videoRef.current) {
-        const stream = videoRef.current.srcObject;
-        if (stream) {
-          const tracks = stream.getTracks();
-          tracks.forEach(track => track.stop());
-        }
+      if (codeReaderRef.current) {
+        codeReaderRef.current.reset();
       }
-      document.body.removeChild(script);
     };
-  }, [scannerActive]);
+  }, []);
 
-  const startScanning = async () => {
-    try {
-      // Запрашиваем доступ к камере
-      await navigator.mediaDevices.getUserMedia({ video: true });
-
-      if (selectedDeviceId && codeReader) {
-        codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-          if (result) {
-            setResult(result.text);
+  const handleStart = () => {
+    if (codeReaderRef.current && selectedDeviceId) {
+      codeReaderRef.current.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
+        if (result) {
+          console.log(result);
+          setResult(result.text);
+        }
+        if (err) {
+          // Проверка типа ошибки
+          if (err.name !== 'NotFoundException') {
+            console.error(err);
+            setResult(err.toString());
           }
-          if (err && !(err instanceof ZXing.NotFoundException)) {
-            setError(`Ошибка: ${err}`);
-          }
-        });
-        setScannerActive(true);
-      }
-    } catch (err) {
-      console.error("Не удалось получить доступ к камере:", err);
-      setError("Не удалось получить доступ к камере.");
+        }
+      });
+      console.log(`Started continuous decode from camera with id ${selectedDeviceId}`);
     }
   };
 
-  const resetScanner = () => {
-    if (codeReader && videoRef.current) {
-      const stream = videoRef.current.srcObject;
-      if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-      }
+  const handleReset = () => {
+    if (codeReaderRef.current) {
+      codeReaderRef.current.reset();
+      setResult('');
+      console.log('Reset.');
     }
-    setResult(null);
-    setError(null);
-    setScannerActive(false);
+  };
+
+  const handleDeviceChange = (e) => {
+    setSelectedDeviceId(e.target.value);
   };
 
   return (
-    <div>
-      <h1>Scan barcode</h1>
+    <>
+      <main className="wrapper" style={{ paddingTop: '2em' }}>
+        <section id="demo-content">
+          <h1 className="title">Scan BarCode</h1>
 
-      <div>
-        <video ref={videoRef} width="300" height="200" style={{ border: '1px solid gray' }} muted autoPlay />
-      </div>
+          <p>
+            <a className="button-small button-outline" href="../../index.html">HOME 🏡</a>
+          </p>
 
-      <div>
-        <button onClick={startScanning} disabled={scannerActive}>Start</button>
-        <button onClick={resetScanner}>Reset</button>
-      </div>
+          <div>
+            <video 
+              id="video" 
+              ref={videoRef} 
+              width="300" 
+              height="200" 
+              style={{ border: '1px solid gray' }}
+            ></video>
+          </div>
 
-      {devices.length > 1 && (
-        <div id="sourceSelectPanel">
-          <label htmlFor="sourceSelect">Change video source:</label>
-          <select
-            id="sourceSelect"
-            style={{ maxWidth: '400px' }}
-            onChange={(e) => setSelectedDeviceId(e.target.value)}
-            value={selectedDeviceId}
-          >
-            {devices.map((device) => (
-              <option key={device.deviceId} value={device.deviceId}>
-                {device.label}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+          <div>
+            <button className="button" onClick={handleStart}>Start</button>
+            <button className="button" onClick={handleReset}>Reset</button>
+          </div>
 
-      <div>
-        <label>Result:</label>
-        <pre>{result ? result : error}</pre>
-      </div>
-    </div>
+          {videoDevices.length > 1 && (
+            <div id="sourceSelectPanel">
+              <label htmlFor="sourceSelect">Change video source:</label>
+              <select 
+                id="sourceSelect" 
+                style={{ maxWidth: '400px' }}
+                onChange={handleDeviceChange}
+              >
+                {videoDevices.map((device) => (
+                  <option key={device.deviceId} value={device.deviceId}>
+                    {device.label || `Device ${device.deviceId}`}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <label>Result:</label>
+          <pre><code id="result">{result}</code></pre>
+
+        </section>
+      </main>
+    </>
   );
 };
 
-export default CameraScanner;
+export default BarcodeScanner;
