@@ -45,17 +45,25 @@ const CameraScanner = () => {
     };
   }, [scannerActive]);
 
-  const startScanning = () => {
-    if (selectedDeviceId && codeReader) {
-      codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-        if (result) {
-          setResult(result.text);
-        }
-        if (err && !(err instanceof ZXing.NotFoundException)) {
-          setError(`Ошибка: ${err}`);
-        }
-      });
-      setScannerActive(true);
+  const startScanning = async () => {
+    try {
+      // Запрашиваем доступ к камере
+      await navigator.mediaDevices.getUserMedia({ video: true });
+
+      if (selectedDeviceId && codeReader) {
+        codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
+          if (result) {
+            setResult(result.text);
+          }
+          if (err && !(err instanceof ZXing.NotFoundException)) {
+            setError(`Ошибка: ${err}`);
+          }
+        });
+        setScannerActive(true);
+      }
+    } catch (err) {
+      console.error("Не удалось получить доступ к камере:", err);
+      setError("Не удалось получить доступ к камере.");
     }
   };
 
