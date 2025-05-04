@@ -56,7 +56,7 @@ export default function RootLayout({ children }) {
               className="logoImage"
             />
             <nav className={"nav"}>
-              <a href=".//#contact">Контакти</a>
+              <a href="./#contact">Контакти</a>
               <a 
                 href="https://vulpes.com.ua/kataloh" 
                 className="link"
