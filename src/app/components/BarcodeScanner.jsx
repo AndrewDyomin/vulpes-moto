@@ -33,7 +33,6 @@ export default function ZxingScanner() {
 
   const handleStart = () => {
     if (!codeReaderRef.current || !selectedDeviceId) return;
-  
     codeReaderRef.current.decodeFromVideoDevice(
       selectedDeviceId,
       videoRef.current,
@@ -42,17 +41,14 @@ export default function ZxingScanner() {
           console.log(result);
           resultRef.current.textContent = result.text;
         }
-  
-        // НЕ выводим NotFoundException
-        if (err && err.name !== 'NotFoundException') {
+        if (err && !(err instanceof codeReaderRef.current.NotFoundException)) {
           console.error(err);
-          resultRef.current.textContent = err.message;
+          resultRef.current.textContent = err.toString();
         }
       }
     );
+    console.log(`Started continuous decode from camera with id ${selectedDeviceId}`);
   };
-  
-  
 
   const handleReset = () => {
     if (codeReaderRef.current) {
@@ -64,17 +60,45 @@ export default function ZxingScanner() {
 
   return (
     <>
-      <main style={{ paddingTop: '2em' }}>
-        <section>
-          <h1 className="title">Scan from Camera</h1>
+      <Head>
+        <title>ZXing TypeScript | Decoding from camera stream</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="author" content="ZXing for JS" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic"
+        />
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/normalize.css@8.0.0/normalize.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/milligram@1.3.0/dist/milligram.min.css"
+        />
+      </Head>
 
-          <div>
-            <video ref={videoRef} width="300" height="200" style={{ border: '1px solid gray' }} />
-          </div>
+      <main className="wrapper" style={{ paddingTop: '2em' }}>
+        <section className="container">
+          <h1 className="title">Scan 1D/2D Code from Video Camera</h1>
+
+          <p>
+            <a className="button-small button-outline" href="/">HOME 🏡</a>
+          </p>
+
+          <p>
+            This example shows how to scan any supported 1D/2D code with ZXing
+            JavaScript library from the device video camera. If more than one video
+            input device is available, a select input allows switching between them.
+          </p>
 
           <div>
             <button className="button" onClick={handleStart}>Start</button>
             <button className="button" onClick={handleReset}>Reset</button>
+          </div>
+
+          <div>
+            <video ref={videoRef} width="300" height="200" style={{ border: '1px solid gray' }} />
           </div>
 
           {devices.length > 1 && (
@@ -97,7 +121,21 @@ export default function ZxingScanner() {
           <label>Result:</label>
           <pre><code ref={resultRef}></code></pre>
 
+          <p>
+            See the <a href="https://github.com/zxing-js/library/tree/master/docs/examples/multi-camera/">source code</a> for this example.
+          </p>
         </section>
+
+        <footer className="footer">
+          <section className="container">
+            <p>
+              ZXing TypeScript Demo. Licensed under the{' '}
+              <a target="_blank" href="https://github.com/zxing-js/library#license" rel="noopener noreferrer" title="MIT">
+                MIT
+              </a>.
+            </p>
+          </section>
+        </footer>
       </main>
     </>
   );
