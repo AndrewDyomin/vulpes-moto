@@ -13,6 +13,25 @@ const BarcodeScanner = () => {
   const codeReaderRef = useRef(null);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && navigator.mediaDevices) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then((stream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        })
+        .catch((err) => {
+          const errorMessage = `Failed to access camera: ${err.message}`;
+          alert(errorMessage);
+          // Или отображать ошибку на экране
+          setResult(errorMessage);
+        });
+    }
+  }, []);
+  
+
+  useEffect(() => {
     // Инициализация объекта BrowserMultiFormatReader
     codeReaderRef.current = new BrowserMultiFormatReader();
     console.log('ZXing code reader initialized');
