@@ -34,7 +34,8 @@ const BarcodeScanner = ({ productsArray }) => {
           "video",
           (result, err) => {
             if (result) {
-              document.getElementById("result").textContent = productsArray.filter(product => product.barcode === result.text);
+              const target = productsArray.filter(product => product.barcode === result.text)
+              document.getElementById("result").textContent = target.name
             }
             if (err && !(err instanceof NotFoundException)) {
               console.error(err);
