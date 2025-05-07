@@ -35,7 +35,7 @@ const BarcodeScanner = ({ productsArray }) => {
           (result, err) => {
             if (result) {
               const target = productsArray.filter(product => product.barcode === result.text)
-              document.getElementById("result").textContent = target[0]?.name ? target[0].name : 'Товар не найден'
+              document.getElementById("result").textContent = target[0]?.name ? `${target[0].name}(${target[0].article})` : 'Товар не найден'
             }
             if (err && !(err instanceof NotFoundException)) {
               console.error(err);
