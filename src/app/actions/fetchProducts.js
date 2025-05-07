@@ -42,11 +42,8 @@ export const fetchProducts = async() => {
     const offers = result?.yml_catalog?.shop?.offers?.offer || [];
 
     const products = Array.isArray(offers) ? offers : [offers];
-    console.log(products)
 
-    return {
-      props: { products },
-    };
+    return { products };
   } catch (error) {
     console.error('Ошибка загрузки YML:', error.message);
     return {
