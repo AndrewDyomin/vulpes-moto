@@ -44,7 +44,7 @@ const BarcodeScanner = ({ productsArray }) => {
                     : data.message;
               } catch (error) {
                 document.getElementById("result").textContent =
-                  "Ошибка запроса к серверу";
+                  `Ошибка запроса к серверу ${error}`;
                 console.error(error);
               }
             }
