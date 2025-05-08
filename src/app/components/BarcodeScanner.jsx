@@ -32,17 +32,21 @@ const BarcodeScanner = ({ productsArray }) => {
         codeReader.decodeFromVideoDevice(
           selectedDeviceId,
           "video",
-          (result, err) => {
+          async (result, err) => {
             if (result) {
-              const target = productsArray.filter(product => product.barcode === result.text)
-              document.getElementById("result").textContent = target[0]?.name ? 
-                `${target[0].name}(${target[0].article})` 
-                : 
-                `Товар ${result.text} не найден`
-            }
-            if (err && !(err instanceof NotFoundException)) {
-              console.error(err);
-              document.getElementById("result").textContent = err;
+              try {
+                const res = await fetch(`/api/products/barcode/${result.text}`);
+                const data = await res.json();
+
+                document.getElementById("result").textContent =
+                  res.status === 200
+                    ? `${data.name} (${data.article})`
+                    : data.message;
+              } catch (error) {
+                document.getElementById("result").textContent =
+                  "Ошибка запроса к серверу";
+                console.error(error);
+              }
             }
           }
         );

@@ -1,53 +1,55 @@
-const axios = require('axios');
-const xml2js = require('xml2js');
+// const axios = require('axios');
+// const xml2js = require('xml2js');
 
-// import Image from 'next/image';
+// export const fetchProducts = async() => {
+  
+//   const ymlUrl = process.env.PRODUCTS_URI;
 
-// export default function ProductsPage({ products }) {
-//   return (
-//     <div>
-//       <h1>Список товаров из YML</h1>
-//       <ul>
-//         {products.map((item) => (
-//           <li key={item.$.id}>
-//             <h3>{item.name}</h3>
-//             <p>Цена: {item.price} {item.currencyId}</p>
-//             {item.picture && (
-//               <Image
-//                 src={item.picture}
-//                 alt={item.name}
-//                 width={150}
-//                 height={150}
-//               />
-//             )}
-//             <p>{item.description}</p>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
+//   try {
+//     const response = await axios.get(ymlUrl);
+//     const xml = response.data;
+
+//     const parser = new xml2js.Parser({ explicitArray: false });
+//     const result = await parser.parseStringPromise(xml);
+
+//     const offers = result?.yml_catalog?.shop?.offers?.offer || [];
+
+//     const products = Array.isArray(offers) ? offers : [offers];
+
+//     return { products };
+//   } catch (error) {
+//     console.error('Ошибка загрузки YML:', error.message);
+//     return {
+//       props: { products: [] },
+//     };
+//   }
 // }
 
-export const fetchProducts = async() => {
-  
-  const ymlUrl = process.env.PRODUCTS_URI;
+// import axios from 'axios';
+// import xml2js from 'xml2js';
+// import { connectToDatabase } from '@/lib/mongo/index';
 
-  try {
-    const response = await axios.get(ymlUrl);
-    const xml = response.data;
+// export default async function handler(req, res) {
 
-    const parser = new xml2js.Parser({ explicitArray: false });
-    const result = await parser.parseStringPromise(xml);
+//   const ymlUrl = process.env.PRODUCTS_URI;
 
-    const offers = result?.yml_catalog?.shop?.offers?.offer || [];
+//   try {
+//     const { db } = await connectToDatabase();
 
-    const products = Array.isArray(offers) ? offers : [offers];
+//     const response = await axios.get(ymlUrl);
+//     const xml = response.data;
 
-    return { products };
-  } catch (error) {
-    console.error('Ошибка загрузки YML:', error.message);
-    return {
-      props: { products: [] },
-    };
-  }
-}
+//     const parser = new xml2js.Parser({ explicitArray: false });
+//     const result = await parser.parseStringPromise(xml);
+
+//     const offers = result?.yml_catalog?.shop?.offers?.offer || [];
+//     const products = Array.isArray(offers) ? offers : [offers];
+
+//     await db.collection('products').deleteMany({});
+//     await db.collection('products').insertMany(products);
+
+//     console.log(`Загружено ${products.length} товаров`);
+//   } catch (error) {
+//     console.error('Ошибка при обновлении:', error);
+//   }
+// }
