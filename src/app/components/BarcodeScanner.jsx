@@ -1,9 +1,10 @@
 "use client";
 
 import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
+import css from "./BarcodeScanner.module.css";
 
 const BarcodeScanner = ({ productsArray }) => {
-  
+  let product = null;
   let selectedDeviceId;
   const codeReader = new BrowserMultiFormatReader();
   console.log("ZXing code reader initialized");
@@ -12,7 +13,7 @@ const BarcodeScanner = ({ productsArray }) => {
     .then((videoInputDevices) => {
       const sourceSelect = document.getElementById("sourceSelect");
       selectedDeviceId = videoInputDevices[0].deviceId;
-      if (videoInputDevices.length >= 1 && typeof window !== 'undefined') {
+      if (videoInputDevices.length >= 1 && typeof window !== "undefined") {
         videoInputDevices.forEach((element) => {
           const sourceOption = document.createElement("option");
           sourceOption.text = element.label;
@@ -25,7 +26,6 @@ const BarcodeScanner = ({ productsArray }) => {
         };
 
         const sourceSelectPanel = document.getElementById("sourceSelectPanel");
-        sourceSelectPanel.style.display = "block";
       }
 
       document.getElementById("startButton").addEventListener("click", () => {
@@ -34,17 +34,48 @@ const BarcodeScanner = ({ productsArray }) => {
           "video",
           async (result, err) => {
             if (result) {
+              console.log(result.text);
               try {
-                const res = await fetch(`/api/products/barcode/${result.text}`);
-                const data = await res.json();
+                const res = await fetch(`/api/products/${result.text}`);
+                const contentType = res.headers.get("content-type");
 
-                document.getElementById("result").textContent =
-                  res.status === 200
-                    ? `${data.name} (${data.article})`
-                    : data.message;
+                if (contentType && contentType.includes("application/json")) {
+                  const data = await res.json();
+
+                  if (res.status === 200) {
+                    const product = data;
+
+                    const nameP = document.createElement("p");
+                    nameP.textContent = `Название: ${data.name}`;
+
+                    const articleP = document.createElement("p");
+                    articleP.textContent = `Артикул: ${data.article}`;
+
+                    const barcodeP = document.createElement("p");
+                    barcodeP.textContent = `Штрихкод: ${data.barcode}`;
+
+                    const resultEl = document.getElementById("result");
+                    resultEl.innerHTML = "";
+                    resultEl.appendChild(nameP);
+                    resultEl.appendChild(articleP);
+                    resultEl.appendChild(barcodeP);
+                  } else {
+                    document.getElementById("result").textContent =
+                      data.message;
+                  }
+
+                  // document.getElementById("result").textContent =
+                  //   res.status === 200
+                  //     ? `${data.name} (${data.article})`
+                  //     : data.message;
+                } else {
+                  const text = await res.text();
+                  console.error("Сервер вернул не JSON:", text);
+                }
               } catch (error) {
-                document.getElementById("result").textContent =
-                  `Ошибка запроса к серверу ${error}`;
+                document.getElementById(
+                  "result"
+                ).textContent = `Ошибка запроса к серверу ${error}`;
                 console.error(error);
               }
             }
@@ -68,34 +99,25 @@ const BarcodeScanner = ({ productsArray }) => {
   return (
     <>
       <main>
-        <section>
-          <div>
-            <video
-              id="video"
-              width="300"
-              height="200"
-            ></video>
+        <section className={css.scanSection}>
+          <div className={`${css.scanBlock}`}>
+            <video id="video" className={css.videoArea}></video>
           </div>
-
-          <div>
-            <a className={"button"} id="startButton">
+          <div className={`${css.scanBlock}${css.buttonsBlock}`}>
+            <a className={css.button} id="startButton">
               Start
             </a>
-            <a className={"button"} id="resetButton">
+            <a className={css.button} id="resetButton">
               Reset
             </a>
           </div>
-
-          <div id="sourceSelectPanel">
+          <div id="sourceSelectPanel" className={`${css.scanBlock}`}>
             <label htmlFor="sourceSelect">Change video source:</label>
             <select id="sourceSelect"></select>
           </div>
-
-          <label>Result:</label>
-          <pre>
-            <code id="result"></code>
-          </pre>
-
+          <div id="result" className={`${css.scanBlock}`}>
+            <label>Result:</label>
+          </div>
         </section>
       </main>
     </>

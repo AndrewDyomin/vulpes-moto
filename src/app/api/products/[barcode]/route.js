@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
     console.log(barcode)
 
     if (!product) {
-      return NextResponse.json({ message: 'Товар не найден' }, { status: 404 });
+      return NextResponse.json({ message: 'Товар не найден' }, { status: 204 });
     }
 
     return NextResponse.json({
@@ -18,7 +18,7 @@ export async function GET(request, { params }) {
       name: product.name || '',
       article: product.article || '',
       barcode: product.barcode || '',
-    });
+    }, { status: 200 });
   } catch (error) {
     console.error('Ошибка при поиске по штрихкоду:', error);
     return NextResponse.json({ message: 'Ошибка сервера' }, { status: 500 });
